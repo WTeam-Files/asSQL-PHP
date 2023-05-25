@@ -1,7 +1,7 @@
 <?php
-class Base {
-    private $db;
 
+class KeyValueStore {
+    private $db;
     public function __construct($databaseFile) {
         $this->db = new SQLite3($databaseFile);
         $this->db->exec('PRAGMA journal_mode = WAL;');
@@ -12,12 +12,16 @@ class Base {
         $query = 'CREATE TABLE IF NOT EXISTS key_value (key TEXT PRIMARY KEY, value TEXT);';
         $this->db->exec($query);
     }
-
     public function get($key) {
         $query = 'SELECT value FROM key_value WHERE key = :key;';
         $statement = $this->db->prepare($query);
         $statement->bindValue(':key', $key);
         $result = $statement->execute();
+        
+        if (!$result) {
+            // تعامل مع خطأ استعلام قاعدة البيانات
+            return null;
+        }
         
         $value = null;
         while ($row = $result->fetchArray()) {
@@ -28,24 +32,39 @@ class Base {
     }
 
     public function set($key, $value) {
+        $value = json_encode($value); // تحويل القيمة إلى سلسلة JSON
+        
         $query = 'INSERT OR REPLACE INTO key_value (key, value) VALUES (:key, :value);';
         $statement = $this->db->prepare($query);
         $statement->bindValue(':key', $key);
         $statement->bindValue(':value', $value);
-        $statement->execute();
+        
+        $result = $statement->execute();
+        if (!$result) {
+            // تعامل مع خطأ استعلام قاعدة البيانات
+        }
     }
 
     public function delete($key) {
         $query = 'DELETE FROM key_value WHERE key = :key;';
         $statement = $this->db->prepare($query);
         $statement->bindValue(':key', $key);
-        $statement->execute();
+        
+        $result = $statement->execute();
+        if (!$result) {
+            // تعامل مع خطأ استعلام قاعدة البيانات
+        }
     }
 
     public function keys() {
         $query = 'SELECT key FROM key_value;';
         $result = $this->db->query($query);
 
+        if (!$result) {
+            // تعامل مع خطأ استعلام قاعدة البيانات
+            return [];
+        }
+        
         $keys = [];
         while ($row = $result->fetchArray()) {
             $keys[] = $row['key'];
@@ -60,10 +79,14 @@ class Base {
         $statement->bindValue(':key', $key);
         $result = $statement->execute();
 
+        if (!$result) {
+            // تعامل مع خطأ استعلام قاعدة البيانات
+            return false;
+        }
+        
         $exists = ($result->fetchArray() !== false);
 
         return $exists;
     }
 }
-// Key-Value Storage for GAYS By @trakoss on Telegram
 ?>
