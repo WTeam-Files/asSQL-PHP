@@ -44,6 +44,11 @@ echo "Gender: " . ($value !== null ? $value : 'Not found') . PHP_EOL;
 $store->set('name', 'John Doe');       // String value
 $store->set('numbers', [1, 2, 3]);     // Array value
 $store->set('person', ['name' => 'John', 'age' => 30]);  // Associative array value
+//get person
+
+$person = $store->get('person');
+echo json_decode($person, true)["age"];
+
 $store->set('is_admin', true);         // Boolean value
 $store->set('age', 25);                // Integer value
 
