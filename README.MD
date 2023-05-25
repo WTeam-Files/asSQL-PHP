@@ -1,5 +1,5 @@
 * That is An example for use package:
-<code>
+```
 <?php
 // Examples by chatGPT 
 
@@ -51,4 +51,4 @@ $store->set('age', 25);                // Integer value
 
 ?>
 
-</code>
+```
