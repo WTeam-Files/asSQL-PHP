@@ -59,7 +59,7 @@ $store->set('age', 25);                // Integer value
 * Using the points system and subscriptions with the package:
 ```
 <?php
-// Examples by chatGPT 
+// Examples by chatGPT with Ali
 
 require_once 'base.php'; // import module class
 
